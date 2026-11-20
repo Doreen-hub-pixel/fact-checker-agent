@@ -2,9 +2,12 @@
 
 import json
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import requests
 import streamlit as st
