@@ -23,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-DEFAULT_API_URL = os.getenv("FACT_CHECK_API_URL", "http://localhost:8000").rstrip("/")
+DEFAULT_API_URL = os.getenv("FACT_CHECK_API_URL", "https://fact-checker-agent.onrender.com").rstrip("/")
 STEPS = {
     "planner": "Planning research",
     "searcher": "Searching trusted sources",
@@ -928,7 +928,7 @@ elif page.startswith("⚙"):
         api_url = st.text_input(
             "API base URL",
             value=st.session_state.api_url,
-            help="For local development, this is usually http://localhost:8000",
+            help="The live API is https://fact-checker-agent.onrender.com",
         )
         save_settings = st.form_submit_button("Save settings", type="primary")
     if save_settings:
