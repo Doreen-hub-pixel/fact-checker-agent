@@ -7,13 +7,27 @@ from pathlib import Path
 import httpx
 import streamlit as st
 from dotenv import load_dotenv
-from supabase_auth import SyncGoTrueClient
+from supabase_auth import SyncGoTrueClient, SyncSupportedStorage
 from supabase_auth.errors import AuthError
 from supabase_auth.types import Session
 
 LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "mars_logo.png"
 
 load_dotenv()
+
+
+class _StreamlitSessionStorage(SyncSupportedStorage):
+    def _key(self, key: str) -> str:
+        return f"_mars_supabase_storage:{key}"
+
+    def get_item(self, key: str) -> str | None:
+        return st.session_state.get(self._key(key))
+
+    def set_item(self, key: str, value: str) -> None:
+        st.session_state[self._key(key)] = value
+
+    def remove_item(self, key: str) -> None:
+        st.session_state.pop(self._key(key), None)
 
 
 def _show_auth_error(exc: Exception) -> None:
@@ -164,7 +178,10 @@ def _render_sign_in(client: SyncGoTrueClient, redirect_url: str) -> None:
 def authenticate_user() -> tuple[SyncGoTrueClient, Session] | None:
     supabase_url = os.getenv("SUPABASE_URL", "").rstrip("/")
     anon_key = os.getenv("SUPABASE_ANON_KEY", "")
-    redirect_url = os.getenv("SUPABASE_REDIRECT_URL", "http://localhost:8501")
+    redirect_url = os.getenv(
+        "SUPABASE_REDIRECT_URL",
+        "https://fact-checker-agent-hgqyvxqwdxnaz6b5yjg8x2.streamlit.app/",
+    )
 
     if not supabase_url or not anon_key:
         missing_settings = [
@@ -194,12 +211,13 @@ def authenticate_user() -> tuple[SyncGoTrueClient, Session] | None:
             st.code(
                 "SUPABASE_URL=https://<project-ref>.supabase.co\n"
                 "SUPABASE_ANON_KEY=<anon-or-publishable-key>\n"
-                "SUPABASE_REDIRECT_URL=http://localhost:8501",
+                "SUPABASE_REDIRECT_URL=https://fact-checker-agent-hgqyvxqwdxnaz6b5yjg8x2.streamlit.app/",
                 language="dotenv",
             )
             st.markdown(
                 "In **Authentication → URL Configuration**, allow "
-                "`http://localhost:8501`. In **Authentication → Providers**, "
+                "`https://fact-checker-agent-hgqyvxqwdxnaz6b5yjg8x2.streamlit.app/`. "
+                "In **Authentication → Providers**, "
                 "enable Email, Google, and GitHub. Configure OAuth client "
                 "credentials in Supabase and use its displayed callback URL in "
                 "each provider's settings."
@@ -224,6 +242,7 @@ def authenticate_user() -> tuple[SyncGoTrueClient, Session] | None:
                 "Authorization": f"Bearer {anon_key}",
             },
             flow_type="pkce",
+            storage=_StreamlitSessionStorage(),
         )
         st.session_state["_mars_supabase_client"] = client
 

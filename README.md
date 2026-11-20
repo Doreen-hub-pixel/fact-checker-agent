@@ -36,9 +36,10 @@ establish source accuracy or independence.
 2. Copy `.env.example` to `.env` and set `GROQ_API_KEY`, `TAVILY_API_KEY`,
    `SUPABASE_URL`, and `SUPABASE_ANON_KEY`. Keep `.env` local; it is excluded
    from Git. Use the Supabase anon/publishable key, never the service-role key.
-3. Add `http://localhost:8501` to Supabase's allowed redirect URLs. Set
-   `SUPABASE_REDIRECT_URL` to the M.A.R.S. UI origin; for deployment, use the
-   deployed HTTPS URL and add it to the allowlist. In the Google and GitHub
+3. Add `https://fact-checker-agent-hgqyvxqwdxnaz6b5yjg8x2.streamlit.app/` to
+   Supabase's allowed redirect URLs. Set `SUPABASE_REDIRECT_URL` to the
+   M.A.R.S. live UI origin; for local development, use
+   `http://localhost:8501` and add it to the allowlist. In the Google and GitHub
    developer consoles, use the callback URL shown by Supabase.
 4. Install dependencies: `pip install -r requirements.txt`.
 5. Start the API: `uvicorn api.app:app --reload --port 8000`.

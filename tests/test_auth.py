@@ -133,6 +133,6 @@ def test_missing_supabase_settings_show_local_setup_instructions(monkeypatch):
     assert not app.exception
     assert any("SUPABASE_URL" in element.value for element in app.error)
     assert any(
-        "SUPABASE_REDIRECT_URL=http://localhost:8501" in element.value
+        "SUPABASE_REDIRECT_URL=https://fact-checker-agent-hgqyvxqwdxnaz6b5yjg8x2.streamlit.app/" in element.value
         for element in app.code
     )
